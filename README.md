@@ -13,4 +13,5 @@ A simple server listening for [OutGauge and MotionSim](https://documentation.bea
 
 ## Usage:
 To build: `sh ./build.sh` (Assumes g++ 11.4 or higher)
+
 To run: `./beamng-protocols <[optional port, default: 4444]>`
