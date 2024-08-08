@@ -9,7 +9,7 @@ A simple server listening for [OutGauge and MotionSim](https://documentation.bea
 ## Features
 * None really
 * Just prints the current vehicle's RPM and velocity, as shown here:
-![Screenshot of logging](https://raw.githubusercontent.com/purifiedfr/purifiedfr/beamng-protocols/screenshot.png)
+![Screenshot of logging](https://github.com/purifiedfr/beamng-protocols/blob/main/screenshot.png?raw=true)
 
 ## Usage:
 To build: `sh ./build.sh` (Assumes g++ 11.4 or higher)
