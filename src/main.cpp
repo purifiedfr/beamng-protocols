@@ -22,12 +22,41 @@
 // your code here
 void handle_motion_sim( motion_sim_t m ) {
     // ...
-    std::cout << "velocity: " << m.velocity.x << " / " << m.velocity.y << " / " << m.velocity.z << '\n';
+    // you could also print stuff here,
+    // but I'm currently not doing anything for
+    // simplicity
+}
+
+// description: formats a gear into a string format
+// param: gear - the gear value from OutGauge
+// returns: a string (R, N, 1, 2, 3, ...)
+std::string format_gear( uint8_t gear ) {
+    if ( gear == 0 ) {
+        return "R";
+    }
+
+    if ( gear == 1 ) {
+        return "N";
+    }
+
+    return std::to_string( gear - 1 );
 }
 
 void handle_outgauge( outgauge_t g ) {
-    // ...
-    std::cout << "rpm: " << g.rpm << '\n';
+    // in km
+    float speed = ( g.speed * 60.f * 60.f ) / 1000.f;
+    const char *speed_unit = "km/h";
+
+    constexpr float mile_multiplier = 1.60934f; 
+
+    if ( !( g.flags & og_km ) ) {
+        speed *= mile_multiplier;
+        speed_unit = "m/h";
+    }
+
+    std::cout << '\r' << speed << ' ' << speed_unit << " @ " << g.rpm << "RPM" << " (" << format_gear( g.gear ) << ')'
+    //      this vvvv is a hacky solution to make sure that remaining characters get erased
+        << "            ";
 }
 
 // description: figure out what port to bind to
