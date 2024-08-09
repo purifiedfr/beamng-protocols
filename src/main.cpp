@@ -54,7 +54,7 @@ void handle_outgauge( outgauge_t g ) {
         speed_unit = "m/h";
     }
 
-    std::cout << '\r' << speed << ' ' << speed_unit << " @ " << g.rpm << "RPM" << " (" << format_gear( g.gear ) << ')'
+    std::cout << '\r' << std::fixed << std::setprecision( 0 ) << speed << ' ' << speed_unit << " @ " << g.rpm << "RPM" << " (" << format_gear( g.gear ) << ')'
     //      this vvvv is a hacky solution to make sure that remaining characters get erased
         << "            ";
 }
