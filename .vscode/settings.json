@@ -3,6 +3,7 @@
         "-std=c++2b"
     ],
     "files.associations": {
-        "span": "cpp"
+        "span": "cpp",
+        "cstdlib": "cpp"
     }
 }

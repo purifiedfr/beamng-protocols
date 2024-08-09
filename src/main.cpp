@@ -4,6 +4,8 @@
 #include <netinet/ip.h>
 #include <netdb.h>
 
+#include <signal.h>
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -81,8 +83,17 @@ int get_port( std::span< char * > args ) {
     return port;
 }
 
-int main( int argc, char **argv ) {
+void exit_handler( int ) {
+    // Re-enable the cursor
+    std::cout << "\e[?25h\n";
 
+    // I'm sure it'd be better to call the previously-set signal handler,
+    // however, since I set so many, it'd be kinda tedious to keep track of
+    // all of them. I'll just do this for this example
+    exit( EXIT_SUCCESS );
+}
+
+int main( int argc, char **argv ) {
     // Get the requested port
     const uint16_t port = get_port( std::span( &argv[ 0 ], argc ) );
 
@@ -124,6 +135,18 @@ int main( int argc, char **argv ) {
     // Add 1 byte to check for above-maximum packet sizes
     constexpr size_t buffer_size = max_size + 1;
 
+    // Hide the cursor (https://stackoverflow.com/questions/30126490/how-to-hide-console-cursor-in-c)
+    std::cout << "\e[?25l\n";
+
+    // To re-enable the cursor
+    // I'm setting a lot of these because why not
+    signal( SIGINT, &exit_handler );
+    signal( SIGTERM, &exit_handler );
+    signal( SIGKILL, &exit_handler );
+    signal( SIGTSTP, &exit_handler );
+    signal( SIGSTOP, &exit_handler );
+    signal( SIGQUIT, &exit_handler );
+
     while ( true ) {
         uint8_t buffer[ buffer_size ] = { };
 
@@ -135,17 +158,25 @@ int main( int argc, char **argv ) {
         constexpr int32_t recv_fail = -1;
         int32_t packet_size = recvfrom( socket_fd, buffer, sizeof( buffer ), 0, &from_addr, &from_addr_size );
         if ( packet_size == recv_fail ) {
+            // Re-enable the cursor
+            std::cout << "\e[?25h\n";
             return EXIT_FAILURE;
         }
         if ( packet_size < min_size ) {
+            // Re-enable the cursor
+            std::cout << "\e[?25h\n";
             return EXIT_FAILURE;
         }
 
         if ( packet_size > max_size ) {
+            // Re-enable the cursor
+            std::cout << "\e[?25h\n";
             return EXIT_FAILURE;
         }
 
         if ( packet_size < std::min( sizeof( motion_sim_t ), sizeof( outgauge_t ) ) ) {
+            // Re-enable the cursor
+            std::cout << "\e[?25h\n";
             return EXIT_FAILURE;
         }
 
@@ -160,7 +191,9 @@ int main( int argc, char **argv ) {
 
     }
 
-    return EXIT_SUCCESS;
+    // Re-enable the cursor
+    std::cout << "\e[?25h\n";
 
+    return EXIT_SUCCESS;
 
 }
