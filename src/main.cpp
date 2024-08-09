@@ -49,7 +49,7 @@ void handle_outgauge( outgauge_t g ) {
     float speed = ( g.speed * 60.f * 60.f ) / 1000.f;
     const char *speed_unit = "km/h";
 
-    constexpr float mile_multiplier = 1.60934f; 
+    constexpr float mile_multiplier = 1.f / 1.60934f; 
 
     if ( !( g.flags & og_km ) ) {
         speed *= mile_multiplier;
