@@ -2,6 +2,8 @@
 A simple server listening for [OutGauge and MotionSim](https://documentation.beamng.com/modding/protocols/) protocols from [BeamNG.drive](https://www.beamng.com/).
 ###### This is just a simple prototype, not a finished implementation or anything.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## TODO
 * Add support for Windows
 * Add built-in support for communication with specific microcontrollers
