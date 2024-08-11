@@ -1,1 +1,0 @@
-g++ -o beamng-protocols -std=c++2b ./src/main.cpp
