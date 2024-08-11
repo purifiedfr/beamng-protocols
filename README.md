@@ -5,7 +5,6 @@ A simple server listening for [OutGauge and MotionSim](https://documentation.bea
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## TODO
-* Add support for Windows
 * Add built-in support for communication with specific microcontrollers
 
 ## Features
@@ -14,6 +13,11 @@ A simple server listening for [OutGauge and MotionSim](https://documentation.bea
 * Allows for extensibility with MotionSim
 
 ## Usage:
-To build: `sh ./build.sh` (Assumes g++ 11.4 or higher)
+To build (in Release):
+```bash
+$ cmake -DCMAKE_BUILD_TYPE=Release -B build .
+$ cmake --build build --config Release
+```
+##### Note: Leave out the `--config Release` part if you're not using a generator that supports configurations, such as Visual Studio
 
-To run: `./beamng-protocols <[optional port, default: 4444]>`
+To run: `$ ./beamng-protocols <[optional port, default: 4444]>`
