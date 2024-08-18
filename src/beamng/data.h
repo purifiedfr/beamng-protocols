@@ -60,6 +60,7 @@ namespace beamng {
         int id; // optional - only if OutGauge ID is specified
 
         bool is_outgauge( ) const;
+        bool prefers_mph( ) const;
     };
 
     // constexpr uint16_t og_shift = 1 << 0;

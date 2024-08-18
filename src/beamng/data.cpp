@@ -15,3 +15,7 @@ bool outgauge_t::is_outgauge( ) const {
             this->magic[ 2 ] == 'a' &&
             this->magic[ 3 ] == 'm';
 }
+
+bool outgauge_t::prefers_mph( ) const {
+    return !( this->flags & og_km );
+}

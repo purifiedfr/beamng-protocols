@@ -40,7 +40,8 @@
 
 #include "beamng/data.h"
 #include "console/console.h"
-
+#include "format/format.h"
+#include "conversion/conversion.h"
 
 // your code here
 void handle_motion_sim( beamng::motion_sim_t m ) {
@@ -50,35 +51,11 @@ void handle_motion_sim( beamng::motion_sim_t m ) {
     // simplicity
 }
 
-// description: formats a gear into a string format
-// param: gear - the gear value from OutGauge
-// returns: a string (R, N, 1, 2, 3, ...)
-std::string format_gear( uint8_t gear ) {
-    if ( gear == 0 ) {
-        return "R";
-    }
-
-    if ( gear == 1 ) {
-        return "N";
-    }
-
-    return std::to_string( gear - 1 );
-}
-
 void handle_outgauge( beamng::outgauge_t g ) {
-    // in km
-    float speed = ( g.speed * 60.f * 60.f ) / 1000.f;
-    const char *speed_unit = "km/h";
+	const format::unit_speed_t speed = format::format_outgauge_speed( g );
 
-    constexpr float mile_multiplier = 1.f / 1.60934f; 
-
-    if ( !( g.flags & beamng::og_km ) ) {
-        speed *= mile_multiplier;
-        speed_unit = "m/h";
-    }
-
-    std::cout << '\r' << std::fixed << std::setprecision( 0 ) << speed << ' ' << speed_unit << " @ " << g.rpm << "RPM" << " (" << format_gear( g.gear ) << ')'
-    //      this vvvv is a hacky solution to make sure that remaining characters get erased
+    std::cout << '\r' << speed.to_string( ) << " @ " << std::setprecision( 0 ) << std::fixed << g.rpm << "RPM" << " (" << format::format_gear( g.gear ) << ')'
+    //      this vvvv is a hacky solution to make sure that remaining characters get erased (fixme?)
         << "            ";
 }
 
