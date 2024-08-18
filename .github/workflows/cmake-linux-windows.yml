@@ -28,7 +28,7 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            output: "**/*.exe"
+            output: Release/beamng-protocols.exe
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
