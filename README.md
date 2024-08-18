@@ -9,7 +9,7 @@ A simple server listening for [OutGauge and MotionSim](https://documentation.bea
 
 ## Features
 * Prints the speed, RPM and current gear, as shown here:
-![Screenshot of logging](https://github.com/purifiedfr/beamng-protocols/blob/main/screenshot2.png?raw=true)
+![Screenshot of logging](https://github.com/purifiedfr/beamng-protocols/blob/main/screenshot.png?raw=true)
 * Allows for extensibility with MotionSim
 
 ## Usage:
