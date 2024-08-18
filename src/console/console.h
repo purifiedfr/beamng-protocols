@@ -1,4 +1,5 @@
 #pragma once
+#include "../os_check.h"
 #if BP_WINDOWS
     #define WIN32_LEAN_AND_MEAN
     #define NOMINMAX

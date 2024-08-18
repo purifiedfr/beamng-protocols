@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <iostream>
 #include "console.h"
-#include "../os_check.h"
 
 #if BP_LINUX
 	#include <signal.h>
@@ -46,7 +45,7 @@
 
 	BOOL WINAPI console_handler( DWORD signal ) {
 		if ( signal == CTRL_C_EVENT ) {
-			enable_cursor( );
+			console::enable_cursor( );
 			exit( EXIT_SUCCESS );
 		}
 
