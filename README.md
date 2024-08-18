@@ -1,4 +1,5 @@
 # BeamNG protocols
+![Banner](https://github.com/purifiedfr/beamng-protocols/blob/main/banner.png?raw=true)
 A simple server listening for [OutGauge and MotionSim](https://documentation.beamng.com/modding/protocols/) protocols from [BeamNG.drive](https://www.beamng.com/).
 ###### This is just a simple prototype, not a finished implementation or anything.
 
