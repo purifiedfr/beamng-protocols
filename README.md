@@ -10,15 +10,21 @@ A simple server listening for [OutGauge and MotionSim](https://documentation.bea
 
 ## Features
 * Prints the speed, RPM and current gear, as shown here:
+
 ![Screenshot of logging](https://github.com/purifiedfr/beamng-protocols/blob/main/screenshot.png?raw=true)
 * Allows for extensibility with MotionSim
 
 ## Usage:
-To build (in Release):
-```bash
+### To build (in Release):
+```sh
 $ cmake -DCMAKE_BUILD_TYPE=Release -B build .
 $ cmake --build build --config Release
 ```
 ##### Note: Leave out the `--config Release` part if you're not using a generator that supports configurations, such as Visual Studio
 
-To run: `$ ./beamng-protocols <[optional port, default: 4444]>`
+### Or, download a release from [the Releases page](https://github.com/purifiedfr/beamng-protocols/releases)
+
+### To run:
+```sh
+$ ./beamng-protocols <[optional port, default: 4444]>
+```
