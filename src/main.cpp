@@ -204,15 +204,6 @@ int main( int argc, char **argv ) {
     // Add 1 byte to check for above-maximum packet sizes
     constexpr size_t buffer_size = max_size + 1;
 
-	// Hide the cursor
-	#if BP_LINUX
-	#elif BP_WINDOWS
-	#endif
-
-	#if BP_LINUX
-	#elif BP_WINDOWS
-	#endif
-
 	// WinSock uses char instead of uint8_t
 	#if BP_LINUX
 		uint8_t buffer[ buffer_size ] = { };
