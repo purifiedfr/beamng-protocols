@@ -8,11 +8,3 @@ project("beamng-protocols")
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 add_executable(beamng-protocols ${SOURCES})
-
-if (WIN32)
-	target_compile_definitions(beamng-protocols PRIVATE BP_WINDOWS=1 BP_LINUX=0)
-elseif(LINUX)
-	target_compile_definitions(beamng-protocols PRIVATE BP_WINDOWS=0 BP_LINUX=1)
-else()
-	message(FATAL_ERROR "Unsupported operating system")
-endif()
