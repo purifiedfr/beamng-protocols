@@ -28,12 +28,15 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+            output: ./build/**/*.exe
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+            output: ./build/beamng-protocols
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            output: ./build/beamng-protocols
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -79,5 +82,5 @@ jobs:
         # Artifact name
         name: protocols-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./protocols-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
+        path: ./${{ matrix.output }}
     
