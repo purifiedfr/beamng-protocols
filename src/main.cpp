@@ -262,9 +262,6 @@ int main( int argc, char **argv ) {
 
     while ( true ) {
 
-        sockaddr from_addr = { };
-        socklen_t from_addr_size = { };
-
         // $ man 2 recv
         //   -> These calls return the number of bytes received, or -1 if an error occurred.
         constexpr int32_t recv_fail = -1;
