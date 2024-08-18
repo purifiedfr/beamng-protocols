@@ -2,8 +2,7 @@
 #include <iostream>
 #include "console.h"
 
-// #if defined( BP_LINUX )
-#if 1
+#if defined( BP_LINUX )
 	#include <signal.h>
 
     // https://stackoverflow.com/questions/30126490/how-to-hide-console-cursor-in-c
