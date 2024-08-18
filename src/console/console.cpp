@@ -1,8 +1,9 @@
 #include <cstdlib>
 #include <iostream>
 #include "console.h"
+#include "../os_check.h"
 
-#if defined( BP_LINUX )
+#if BP_LINUX
 	#include <signal.h>
 
     // https://stackoverflow.com/questions/30126490/how-to-hide-console-cursor-in-c
@@ -36,7 +37,7 @@
     }
 
 
-#elif defined( BP_WINDOWS )
+#elif BP_WINDOWS
     #define WIN32_LEAN_AND_MEAN
     #define NOMINMAX
     #include <windows.h>
