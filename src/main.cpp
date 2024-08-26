@@ -1,20 +1,11 @@
-#if defined( __linux__ )
-	#define BP_LINUX 1
-	#define BP_WINDOWS 0
-#elif defined( _WIN32 ) || defined( _WIN64 )
-	#define BP_LINUX 0
-	#define BP_WINDOWS 1
-#else
-	#error Unsupported operating system
-#endif
+#include "os_check.h"
 
-#include <sys/types.h>
 #if BP_LINUX
+	#include <sys/types.h>
 	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <netinet/ip.h>
 	#include <netdb.h>
-	#include <signal.h>
 #elif BP_WINDOWS
 	#define WIN32_LEAN_AND_MEAN
 	#define NOMINMAX
@@ -40,45 +31,23 @@
 #include <bit>
 
 #include "beamng/data.h"
-
+#include "console/console.h"
+#include "format/format.h"
+#include "conversion/conversion.h"
 
 // your code here
-void handle_motion_sim( motion_sim_t m ) {
+void handle_motion_sim( beamng::motion_sim_t m ) {
     // ...
     // you could also print stuff here,
     // but I'm currently not doing anything for
     // simplicity
 }
 
-// description: formats a gear into a string format
-// param: gear - the gear value from OutGauge
-// returns: a string (R, N, 1, 2, 3, ...)
-std::string format_gear( uint8_t gear ) {
-    if ( gear == 0 ) {
-        return "R";
-    }
+void handle_outgauge( beamng::outgauge_t g ) {
+	const format::unit_speed_t speed = format::format_outgauge_speed( g );
 
-    if ( gear == 1 ) {
-        return "N";
-    }
-
-    return std::to_string( gear - 1 );
-}
-
-void handle_outgauge( outgauge_t g ) {
-    // in km
-    float speed = ( g.speed * 60.f * 60.f ) / 1000.f;
-    const char *speed_unit = "km/h";
-
-    constexpr float mile_multiplier = 1.f / 1.60934f; 
-
-    if ( !( g.flags & og_km ) ) {
-        speed *= mile_multiplier;
-        speed_unit = "m/h";
-    }
-
-    std::cout << '\r' << std::fixed << std::setprecision( 0 ) << speed << ' ' << speed_unit << " @ " << g.rpm << "RPM" << " (" << format_gear( g.gear ) << ')'
-    //      this vvvv is a hacky solution to make sure that remaining characters get erased
+    std::cout << '\r' << speed.to_string( ) << " @ " << std::setprecision( 0 ) << std::fixed << g.rpm << "RPM" << " (" << format::format_gear( g.gear ) << ')'
+    //      this vvvv is a hacky solution to make sure that remaining characters get erased (fixme?)
         << "            ";
 }
 
@@ -104,37 +73,11 @@ int get_port( std::span< char * > args ) {
     return port;
 }
 
-#if BP_LINUX
-	void enable_cursor( ) {
-		std::cout << "\e[?25h\n";
-	}
-	void exit_handler( int ) {
-		enable_cursor( );
-
-		// I'm sure it'd be better to call the previously-set signal handler,
-		// however, since I set so many, it'd be kinda tedious to keep track of
-		// all of them. I'll just do this for this example
-		exit( EXIT_SUCCESS );
-	}
-#elif BP_WINDOWS
-	static HCURSOR og_cursor = { };
-
-	void enable_cursor( ) {
-		SetCursor( og_cursor );
-	}
-
-	BOOL WINAPI console_handler( DWORD signal ) {
-		if ( signal == CTRL_C_EVENT ) {
-			enable_cursor( );
-			exit( EXIT_SUCCESS );
-		}
-
-		return true;
-	}
-#endif
-
 // TODO: do proper cleanup of sockets, currently it doesn't matter since exiting cleans everything up anyway
 int main( int argc, char **argv ) {
+
+	console::cursor_hider_t hider = { };
+
 	#if BP_WINDOWS
 	  	{
 			// Initialize WinSock   
@@ -225,33 +168,10 @@ int main( int argc, char **argv ) {
 	#endif
 
     //                     this vvvvvv                 could practically be: std::max( sizeof( outgauge_t ), sizeof( motionsim_t ) )
-    constexpr size_t max_size = sizeof( buffer_t ); // why isn't it? because this looks cleaner
-    constexpr size_t min_size = std::min( sizeof( outgauge_t ), sizeof( motion_sim_t ) );
+    constexpr size_t max_size = sizeof( beamng::buffer_t ); // why isn't it? because this looks cleaner
+    constexpr size_t min_size = std::min( sizeof( beamng::outgauge_t ), sizeof( beamng::motion_sim_t ) );
     // Add 1 byte to check for above-maximum packet sizes
     constexpr size_t buffer_size = max_size + 1;
-
-	// Hide the cursor
-	#if BP_LINUX
-    	// https://stackoverflow.com/questions/30126490/how-to-hide-console-cursor-in-c
-    	std::cout << "\e[?25l\n";
-	#elif BP_WINDOWS
-	 	// https://stackoverflow.com/questions/16110898/how-can-i-hide-the-mouse-cursor
-		og_cursor = GetCursor( );
-		SetCursor( nullptr );
-	#endif
-
-	#if BP_LINUX
-		// To re-enable the cursor
-		// I'm setting a lot of these because why not
-		signal( SIGINT, &exit_handler );
-		signal( SIGTERM, &exit_handler );
-		signal( SIGKILL, &exit_handler );
-		signal( SIGTSTP, &exit_handler );
-		signal( SIGSTOP, &exit_handler );
-		signal( SIGQUIT, &exit_handler );
-	#elif BP_WINDOWS
-		SetConsoleCtrlHandler( &console_handler, true );
-	#endif
 
 	// WinSock uses char instead of uint8_t
 	#if BP_LINUX
@@ -268,25 +188,21 @@ int main( int argc, char **argv ) {
 
         int32_t packet_size = recv( socket_fd, buffer, buffer_size, 0 );
         if ( packet_size == recv_fail ) {
-			enable_cursor( );
             return EXIT_FAILURE;
         }
         if ( packet_size < min_size ) {
-			enable_cursor( );
             return EXIT_FAILURE;
         }
 
         if ( packet_size > max_size ) {
-			enable_cursor( );
             return EXIT_FAILURE;
         }
 
-        if ( packet_size < std::min( sizeof( motion_sim_t ), sizeof( outgauge_t ) ) ) {
-			enable_cursor( );
+        if ( packet_size < std::min( sizeof( beamng::motion_sim_t ), sizeof( beamng::outgauge_t ) ) ) {
             return EXIT_FAILURE;
         }
 
-        auto packet_buffer = std::bit_cast< buffer_t * >( &buffer[ 0 ] );
+        auto packet_buffer = std::bit_cast< beamng::buffer_t * >( &buffer[ 0 ] );
         if ( packet_buffer->outgauge.is_outgauge( ) ) {
             handle_outgauge( packet_buffer->outgauge );
         }
@@ -296,8 +212,6 @@ int main( int argc, char **argv ) {
         }
 
     }
-
-	enable_cursor( );
 
     return EXIT_SUCCESS;
 
